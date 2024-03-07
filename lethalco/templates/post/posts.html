@@ -2,7 +2,6 @@
 {% extends 'flatpages/default.html' %} 
 {% load custom_filters %}
 {% load custom_tags %}
-{% load i18n %}
 {% load tz %}
 {% block title %}
 Posts
@@ -11,25 +10,8 @@ Posts
 <!-- В контенте на странице мы выводим все посты -->
 
 {% block content %}
-   <h1>Всего постов: {{ posts|length }}</h1>
-   
    <a href="news/create/">Создать новость</a>
    <a href="article/create/">Создать статью</a>
-   <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %} <!-- Не забываем по csrf_token для POST запросов -->
-    <input type="hidden" name="next" value="{{ redirect_to }}">
-    
-    <select name="language" id="">
-        {% get_available_languages as LANGUAGES %} <!-- получаем языки -->
-        {% get_language_info_list for LANGUAGES as languages %} <!-- Помещаем их в список languages -->
-
-        {% for language in languages %} <!-- Итерируясь по списку, выводим их название на языке пользователя и код -->
-            <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %} >
-                {{ language.name_local }} - {{ language.code }}
-            </option>
-        {% endfor %}
-    </select>
-    <input type="submit" value="set">
-    </form>
     {% get_current_timezone as TIME_ZONE %}
     <form action="" method="POST">
         {% csrf_token %}

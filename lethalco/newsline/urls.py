@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданные нами представления
-from .views import PostsList, PostDetail, PostSearch, PostCreate, #PostUpdate, PostDelete, CategoryListView, subscribe
+from .views import PostsList, PostDetail, PostSearch, PostCreate #PostUpdate, PostDelete, CategoryListView, subscribe
 from django.views.decorators.cache import cache_page
 
 urlpatterns = [
@@ -14,8 +14,8 @@ urlpatterns = [
    # int — указывает на то, что принимаются только целочисленные значения
    path('<int:pk>', PostDetail.as_view(), name='post_detail'), #cache_page(300)(PostDetail.as_view())
    path('search/', PostSearch.as_view(), name='post_search'),
-   path('news/create/', PostCreate.as_view(), name='post_create'),
-   path('article/create/', PostCreate.as_view(), name='post_create'),
+   path('memes/create/', PostCreate.as_view(), name='post_create'),
+   path('found/create/', PostCreate.as_view(), name='post_create'),
 #    path('<int:pk>/edit/', PostUpdate.as_view(), name='edit'),
 #    path('<int:pk>/delete/', PostDelete.as_view(), name='delete'),
 #    path('categories/<int:pk>', CategoryListView.as_view(), name='category_list'),

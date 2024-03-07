@@ -2,28 +2,43 @@ from typing import Any
 from django.db.models.query import QuerySet
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
+import pytz
 from .models import Post
 from .forms import PostForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .filters import PostFilter
+from django.shortcuts import redirect
+from django.utils import timezone
 # Create your views here.
 
 class PostsList(ListView):
     model = Post
     ordering = '-date'
-    template_name = 'template/post/posts.html'
+    template_name = 'post/posts.html'
     context_object_name = 'posts'
     paginate_by = 10
 
-    # def get_queryset(self) -> QuerySet[Any]:
-    #     queryset = super().get_queryset()
-    #     self.filterset = PostFilter(self.request.GET, queryset)
-    #     return super().get_queryset()
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset)
+        return super().get_queryset()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = PostFilter(
+            self.request.GET, queryset=self.get_queryset())
+        context['current_time'] = timezone.localtime(timezone.now())
+        context['timezones'] = pytz.common_timezones
+        return context
+
+    def post(self, request):
+        request.session['django_timezone'] = request.POST['timezone']
+        return redirect('/posts/')
 
 
 class PostDetail(DetailView):
     model = Post
-    template_name = 'template/post/post.html'
+    template_name = 'post/post.html'
     context_object_name = 'post'
 
     # def get_object(self, *args, **kwargs):
@@ -37,7 +52,7 @@ class PostDetail(DetailView):
 class PostSearch(ListView):
     model = Post
     ordering = '-date'
-    template_name = 'template/post/search/post_search.html'
+    template_name = 'post/search/post_search.html'
     context_object_name = 'post_search'
 
     def get_queryset(self):
