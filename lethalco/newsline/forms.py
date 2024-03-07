@@ -5,9 +5,8 @@ from .models import Post
 
 
 class PostForm(forms.ModelForm):
-    user_id = forms.IntegerField()
-    pclasses = [('Runner', 'R'), ('Monitor', 'M')]
+    pclasses = [('R', 'Runner'), ('M', 'Monitor')]
     pclass = forms.ChoiceField(choices=pclasses, widget=forms.RadioSelect)
     class Meta:
         model = Post
-        fields = ['title', 'text', 'user_id', 'pclass', ]
+        fields = ['title', 'text', 'pclass', ]

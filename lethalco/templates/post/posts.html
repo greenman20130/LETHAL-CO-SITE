@@ -10,8 +10,6 @@ Posts
 <!-- В контенте на странице мы выводим все посты -->
 
 {% block content %}
-   <a href="news/create/">Создать новость</a>
-   <a href="article/create/">Создать статью</a>
     {% get_current_timezone as TIME_ZONE %}
     <form action="" method="POST">
         {% csrf_token %}
@@ -39,7 +37,9 @@ Posts
                <td>Заголовок</td>
                <td>Дата</td>
                <td>Текст</td>
-               <td>Категория</td>
+               <td>Тип</td>
+               <td>Класс</td>
+
            </tr>
            
 
@@ -48,11 +48,8 @@ Posts
                <td><a href="/posts/{{ post.id }}"> {{ post.title|censor }}</a></td>
                <td>{{ post.time|date:'d M Y' }}</td>
                <td>{{ post.text|censor|truncatewords:20 }}</td>
-               <td>
-                {% for category in post.category.all %}
-                    <a href="{% url 'category_list' category.id %}">{{ category }}</a>
-                {% endfor %}
-                </td>
+               <td>{{ post.type }}</td>
+               <td>{{ post.pclass }}</td>
            </tr>
            {% endfor %}
 

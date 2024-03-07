@@ -69,17 +69,17 @@ class PostSearch(ListView):
 class PostCreate(PermissionRequiredMixin, CreateView):
     form_class = PostForm
     model = Post
-    template_name = 'post_create.html'
+    template_name = 'post/post_create.html'
     permission_required = ('post.add_post', )
 
     def form_valid(self, form):
         post = form.save(commit=False)
-        form = PostForm(initial={'user_id': self.request.user.id})
         if '/found/' in self.request.path:
             type_ = 'FO'
         elif '/memes/' in self.request.path:
             type_ = 'ME'
         post.type = type_
+        post.user_id = self.request.user.id
         post.save()
         return super().form_valid(form)
         
