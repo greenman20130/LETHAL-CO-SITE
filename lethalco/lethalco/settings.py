@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'django.contrib.flatpages',
     'fpages',
-    'news.apps.NewsConfig',
+    'newsline.apps.NewslineConfig',
     'django_filters',
     'sign',
     'protect',
@@ -174,3 +174,148 @@ EMAIL_HOST_USER = 'leha.shelestov'  # ваше имя пользователя, 
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASS')  # пароль от почты
 EMAIL_USE_SSL = True  # Яндекс использует ssl, подробнее о том, что это, почитайте в дополнительных источниках, но включать его здесь обязательно
 DEFAULT_FROM_EMAIL = os.getenv('SERVER_EMAIL')
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+    }
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'style' : '{', 
+    'formatters': {
+        'simple_form': {
+            'format': '%(asctime)s %(levelname)s %(message)s'
+        },
+        'simple_log_form' : {
+            'format' : '%(asctime)s %(levelname)s %(module)s %(message)s'
+        },
+        'warning_form' : {
+            'format': '%(pathname)s'
+        },
+        'error_form' : {
+            'format': '%(exc_info)s'
+        },
+        'warning_log_form' : {
+            'format' : '%(asctime)s %(levelname)s %(message)s %(pathname)s'
+        },
+        'error_log_form' : {
+            'format' : '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s'
+        },
+        'error_email_form' : {
+            'format' : '%(asctime)s %(levelname)s %(message)s %(pathname)s'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+         'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        }        
+    },
+    
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple_form',
+        },
+        'console_warning' : {
+            'level' : 'WARNING',
+            'filters' : ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'warning_form'
+        },
+        'console_error' : {
+            'level' : 'ERROR',
+            'filters' : ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'error_form',
+        },
+        'log_general' : {
+            'level' : 'DEBUG',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'formatter': 'simple_log_form',
+            'filename' : 'general.log',
+        },
+        'log_warning' : {
+            'level' : 'WARNING',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'formatter': 'warning_log_form',
+            'filename' : 'general.log',
+        },
+        'log_error' : {
+            'level' : 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'formatter': 'error_log_form',
+            'filename' : 'errors.log',
+        },
+        'log_security': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'formatter': 'error_log_form',
+            'filename': 'security.log',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],            
+            'class': 'django.utils.log.AdminEmailHandler',
+            'email_backend': 'django.core.mail.backends.filebased.EmailBackend',
+            'formatter': 'error_email_form',
+        },
+
+        
+    },
+    'loggers': {
+        'django': {
+            'level' : 'DEBUG',
+            'handlers': ['console', 'console_warning', 'console_error', 'log_general'],
+            'propagate': True,
+        },
+        'django.request' : {
+            'handlers': ['log_error', 'mail_admins'],
+            'propagate': False,
+        },
+        'django.template': {
+            'handlers': ['log_error'],
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['log_error'],
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['log_error', 'mail_admins'],
+            'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['log_security'],  
+            'propagate': False,
+        },
+    }
+}
+
+REST_FRAMEWORK = {
+   'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+   'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+   'PAGE_SIZE': 10,
+   'DEFAULT_PERMISSION_CLASSES': [
+       'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+   ]
+
+}

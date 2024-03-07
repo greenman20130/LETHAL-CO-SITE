@@ -1,0 +1,102 @@
+<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
+{% extends 'flatpages/default.html' %} 
+{% load custom_filters %}
+{% load custom_tags %}
+{% load i18n %}
+{% load tz %}
+{% block title %}
+Posts
+{% endblock title %}
+ 
+<!-- В контенте на странице мы выводим все посты -->
+
+{% block content %}
+   <h1>Всего постов: {{ posts|length }}</h1>
+   
+   <a href="news/create/">Создать новость</a>
+   <a href="article/create/">Создать статью</a>
+   <form action="{% url 'set_language' %}" method="POST"> {% csrf_token %} <!-- Не забываем по csrf_token для POST запросов -->
+    <input type="hidden" name="next" value="{{ redirect_to }}">
+    
+    <select name="language" id="">
+        {% get_available_languages as LANGUAGES %} <!-- получаем языки -->
+        {% get_language_info_list for LANGUAGES as languages %} <!-- Помещаем их в список languages -->
+
+        {% for language in languages %} <!-- Итерируясь по списку, выводим их название на языке пользователя и код -->
+            <option value="{{ language.code }}" {% if language.code == LANGUAGE_CODE %} selected {% endif %} >
+                {{ language.name_local }} - {{ language.code }}
+            </option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="set">
+    </form>
+    {% get_current_timezone as TIME_ZONE %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <label for="timezone">Time zone:</label>
+        <select name="timezone">
+            {% for tz in timezones %}
+            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Set">
+    </form>
+ 
+    {{ TIME_ZONE }}
+    {{ current_time|timezone:TIME_ZONE }} <!-- Отображаем время в выбранном часовом поясе  -->
+ 
+    {% for model in models %}
+    <div class="model-class">
+        {{ model.name }} 
+    </div>
+    {% endfor %}
+   <hr>
+   {% if posts %}
+       <table>
+            <tr class="{% cycle 'blue' 'white' %}">
+               <td>Заголовок</td>
+               <td>Дата</td>
+               <td>Текст</td>
+               <td>Категория</td>
+           </tr>
+           
+
+           {% for post in posts %}
+           <tr class="{% cycle 'blue' 'white' %}">
+               <td><a href="/posts/{{ post.id }}"> {{ post.title|censor }}</a></td>
+               <td>{{ post.time|date:'d M Y' }}</td>
+               <td>{{ post.text|censor|truncatewords:20 }}</td>
+               <td>
+                {% for category in post.category.all %}
+                    <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+                {% endfor %}
+                </td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Постов нет!</h2>
+   {% endif %}
+
+
+   {% if page_obj.has_previous %}
+   {# Для каждой ссылки пагинации указываем обработку через новый тег #}
+   <a href="?{% url_replace page=1 %}">1</a>
+   {% if page_obj.previous_page_number != 1 %}
+       ...
+       <a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+   {% endif %}
+{% endif %}
+
+{{ page_obj.number }}
+
+{% if page_obj.has_next %}
+   <a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+   {% if paginator.num_pages != page_obj.next_page_number %}
+       ...
+       <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+   {% endif %}
+{% endif %}
+
+{% endblock content %}

@@ -16,14 +16,21 @@ class Post(models.Model):
     date = models.DateTimeField(auto_now_add = True)
     text = models.TextField()
     like = models.IntegerField(default = 0)
+
+    meme = 'ME'
+    found = 'FO'
+    types = [
+        (meme, 'Мемы'),
+        (found, 'Поиск команды')
+    ]
+    type = models.CharField(max_length = 13, choices = types, null = True)
+
     runner = 'R'
     monitor = 'M'
-
     pclasses = [
         (runner, 'Бегун'),
         (monitor, 'Мониторщик')
     ]
-
     pclass = models.CharField(max_length = 10, choices = pclasses)
 
 
