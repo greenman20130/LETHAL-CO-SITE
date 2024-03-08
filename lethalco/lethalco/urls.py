@@ -24,4 +24,6 @@ urlpatterns = [
     path('posts/', include('newsline.urls')),
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
+    
 ]

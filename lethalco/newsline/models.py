@@ -1,14 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
+from ckeditor_uploader.fields import RichTextUploadingField
+
 
 class Post(models.Model):
     title = models.CharField(max_length = 30)
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     date = models.DateTimeField(auto_now_add = True)
-    text = models.TextField()
+    text = RichTextUploadingField(null=True)
     like = models.IntegerField(default = 0)
-
     meme = 'ME'
     found = 'FO'
     types = [

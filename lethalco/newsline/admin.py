@@ -1,18 +1,23 @@
 from django.contrib import admin
-from .models import Post
-from modeltranslation.admin import TranslationAdmin # импортируем модель амдинки (вспоминаем модуль про переопределение стандартных админ-инструментов)
- 
+from .models import Post, Message, Comment
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
+from django import forms
  
 # создаём новый класс для представления товаров в админке
-class PostAdmin(admin.ModelAdmin):
-    # list_display — это список или кортеж со всеми полями, которые вы хотите видеть в таблице с товарами
+class PostAdminForm(forms.ModelForm):
+    content = forms.CharField(widget=CKEditorUploadingWidget(), label="Контент")
     list_display =  ('title', 'text', 'user_id')
-    list_filter = ('user_id', 'pclass',) # добавляем примитивные фильтры в нашу админку
-    search_fields = ('title',) # тут всё очень похоже на фильтры из запросов в базу
- 
-class PostAdmin(TranslationAdmin):
-    model = Post
+    list_filter = ('user_id', 'pclass',)
+    search_fields = ('title',)
+    class Meta:
+        model = Post
+        fields = '__all__'
+class PostAdmin(admin.ModelAdmin):
+    form = PostAdminForm
+    
  
 # Register your models here.
  
-admin.site.register(Post)
+admin.site.register(Post, PostAdmin)
+admin.site.register(Comment)
+admin.site.register(Message)
