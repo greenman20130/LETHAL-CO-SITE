@@ -7,17 +7,16 @@ from django.contrib.auth.models import Group
 
 class BaseRegisterForm(UserCreationForm):
     email = forms.EmailField(label = "Email")
-    first_name = forms.CharField(label = "Имя")
-    last_name = forms.CharField(label = "Фамилия")
+    username = forms.CharField(label = "Ник")
+    steam_id = forms.CharField(label = "Steam_id")
 
     class Meta:
         model = User
-        fields = ("username", 
-                  "first_name", 
-                  "last_name", 
-                  "email", 
+        fields = ["username", 
+                  "steam_id",
+                  "email",
                   "password1", 
-                  "password2", )
+                  "password2", ]
         
 
 

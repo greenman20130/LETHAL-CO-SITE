@@ -1,13 +1,20 @@
 from django import forms
-from django.core.exceptions import ValidationError
-from datetime import date
-from .models import Post
+from .models import Post, Message
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 class PostForm(forms.ModelForm):
-    text = forms.CharField(widget=CKEditorUploadingWidget)
+    title = forms.CharField(label='Заголовок')
+    text = forms.CharField(widget=CKEditorUploadingWidget, label='Текст')
     pclasses = [('R', 'Runner'), ('M', 'Monitor')]
-    pclass = forms.ChoiceField(choices=pclasses, widget=forms.RadioSelect)
+    pclass = forms.ChoiceField(choices=pclasses, widget=forms.RadioSelect, label='Кто ты воин')
     class Meta:
         model = Post
-        fields = '__all__'
+        fields = ['title', 'text', 'pclass']
+
+
+class MessageForm(forms.ModelForm):
+    text = forms.CharField(label='Текст сообщения: ')
+
+    class Meta:
+        model = Message
+        fields = ['text', ]

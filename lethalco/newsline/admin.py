@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, Message, Comment
+from .models import Post, Message
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django import forms
  
@@ -13,11 +13,8 @@ class PostAdminForm(forms.ModelForm):
         model = Post
         fields = '__all__'
 class PostAdmin(admin.ModelAdmin):
-    form = PostAdminForm
-    
- 
+    form = PostAdminForm 
 # Register your models here.
  
 admin.site.register(Post, PostAdmin)
-admin.site.register(Comment)
 admin.site.register(Message)

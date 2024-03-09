@@ -1,13 +1,13 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<a href="/posts/">Вернуться ко всем постам</a>
-<h1>Создать пост</h1>
-<hr>
-<form action="" method="post">
+<a href="/posts/">Вернуться к постам</a>
+<h1>Сообщение</h1>
+<hr><div class="enjoy-css">
+    <form action="" method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    {{ form.media }}
     <input type="submit" value="Save" />
 </form>
+</div>
 {% endblock content %}

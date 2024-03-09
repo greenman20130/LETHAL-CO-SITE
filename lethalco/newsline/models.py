@@ -9,7 +9,7 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     date = models.DateTimeField(auto_now_add = True)
     text = RichTextUploadingField(null=True)
-    like = models.IntegerField(default = 0)
+
     meme = 'ME'
     found = 'FO'
     types = [
@@ -35,9 +35,3 @@ class Message(models.Model):
     date = models.DateTimeField(auto_now_add = True)
     sender = models.ForeignKey(User, on_delete = models.CASCADE)
     to = models.IntegerField()
-
-
-class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete = models.CASCADE)
-    text = models.TextField()
-    post = models.ForeignKey(Post, on_delete = models.CASCADE)
