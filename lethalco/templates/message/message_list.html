@@ -3,43 +3,25 @@
 {% load custom_tags %}
 {% load tz %}
 {% block title %}
-Posts
+Messages
 {% endblock title %}
  
 
 {% block content %}
-    {% get_current_timezone as TIME_ZONE %}
-    <form action="" method="POST">
-        {% csrf_token %}
-        <label for="timezone">Time zone:</label>
-        <select name="timezone">
-            {% for tz in timezones %}
-            <option value="{{ tz }}"{% if tz == TIME_ZONE %} selected{% endif %}>{{ tz }}</option>
-            {% endfor %}
-        </select>
-        <input type="submit" value="Set">
-    </form>
- 
-    {{ TIME_ZONE }}
-    {{ current_time|timezone:TIME_ZONE }}
-    
     {% for model in models %}
     <div class="model-class">
         {{ model.name }} 
     </div>
     {% endfor %}
     <hr>
-    {% if posts %}
+    {% if messages %}
         <table>
-
-            {% for post in posts %}
+            {% for message in messages %}
             <tr class="{% cycle 'blue' 'white' %}">
                 <div class="enjoy-css">
-                <h1><a href="/posts/{{ post.id }}"> {{ post.title|censor }}</a></h1>
-                <h1>Время публикации: {{ post.date|date:'d M Y' }}</h1>
-                <h1>{{ post.text|safe|truncatewords:20 }}</h1>
-                <h1>Цель: {{ post.get_type_display }}</h1>
-                <h1>По жизни: {{ post.get_pclass_display }}</h1>
+                <h1>{{ message.text }}</h1>
+                <h1>Время отправки: {{ message.date }}</h1>
+                <h1><a href="/posts/profile/{{ message.sender_id }}">{{ message.sender_id }}</h1></a>
             </div>
             </tr>
             {% endfor %}
@@ -48,7 +30,7 @@ Posts
         </table>
     </div>
     {% else %}
-        <h2>Постов нет!</h2>
+        <h2>Сообщений нет!</h2>
     {% endif %}
 
 

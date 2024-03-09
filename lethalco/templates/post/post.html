@@ -1,23 +1,28 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
 {% load custom_filters %}
 
-<!-- Название у нас будет Product -->
+
 {% block title %}
 Post
 {% endblock title %}
 
-<!-- В контенте на странице мы выводим сам товар, идентификатор которого был передан в url -->
 {% block content %}
 
 <a href="/posts/">Вернуться ко всем постам</a>
 <h1>
-    {{ post.title }}
-    <hr>
-    <h1>Дата публикации:{{ post.date }}</h1>
-    <h1>{{ post.text }}</h1>
-    <h1>Автор:{{ post.user.username }}</h1>
-    <h1>Лайки:{{ post.like }}</h1>
+    <div class="enjoy-css">
+        <h1>{{ post.title }}</h1>
+        <hr>
+        <h1>{{ post.text|safe }}</h1>
+        {{ form.media }}
+        <h1><a href="{% url 'profile' post.user_id %}">Автор: {{ post.user.username }}</a></h1>
+        <h1>Дата публикации: {{ post.date }}</h1>
+        <h1>Тип: {{ post.get_type_display }}</h1>
+        <h1>Класс: {{ post.get_pclass_display }}</h1>
+        {% if post.type == 'FO' %}
+        <h1><a href="{% url 'message' post.user_id%}">Откликнуться</a></h1>
+    {% endif %}
+    </div>
     
 
 </h1>

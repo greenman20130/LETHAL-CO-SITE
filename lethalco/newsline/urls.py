@@ -1,7 +1,8 @@
 from django.urls import path
 # Импортируем созданные нами представления
-from .views import PostsList, PostDetail, PostSearch, PostCreate #PostUpdate, PostDelete, CategoryListView, subscribe
+from .views import PostsList, PostDetail, PostSearch, PostCreate, ProfileDetail, MessageCreate, MessageList
 from django.views.decorators.cache import cache_page
+from .models import Message
 
 urlpatterns = [
    # path — означает путь.
@@ -16,6 +17,10 @@ urlpatterns = [
    path('search/', PostSearch.as_view(), name='post_search'),
    path('memes/create/', PostCreate.as_view(), name='post_create'),
    path('found/create/', PostCreate.as_view(), name='post_create'),
+   path('profile/<int:pk>', ProfileDetail.as_view(), name='profile' ),
+   path('message/<int:pk>', MessageCreate.as_view(model=Message, success_url='/posts/'), name='message'),
+   path('messages/', MessageList.as_view(), name='messages')
+   
 #    path('<int:pk>/edit/', PostUpdate.as_view(), name='edit'),
 #    path('<int:pk>/delete/', PostDelete.as_view(), name='delete'),
 #    path('categories/<int:pk>', CategoryListView.as_view(), name='category_list'),

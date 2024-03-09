@@ -1,6 +1,6 @@
 from django_filters import FilterSet
 from django.forms import DateInput
-from .models import Post
+from .models import Post, Message
 from django import forms
 import django_filters
 
@@ -27,4 +27,21 @@ class PostFilter(FilterSet):
             'date',
             'text',
             'type',
+        }
+
+
+class MessageFilter(FilterSet):
+    text = django_filters.Filter(
+        field_name='text', lookup_expr='icontains', label='Текст')
+    date = django_filters.DateFilter(
+        field_name='date', lookup_expr='gte', widget=DateInput(attrs={'type': 'date'}), label='С')
+    sender_id = django_filters.Filter(
+        field_name='sender_id', lookup_expr='icontains', label='От')
+
+    class Meta:
+        model = Message
+        fields = {
+            'text',
+            'sender_id',
+            'date',
         }

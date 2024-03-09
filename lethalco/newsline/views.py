@@ -1,14 +1,15 @@
 from typing import Any
 from django.db.models.query import QuerySet
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
 import pytz
-from .models import Post
-from .forms import PostForm
+from .models import Post, User, Message
+from .forms import PostForm, MessageForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .filters import PostFilter
+from .filters import PostFilter, MessageFilter
 from django.shortcuts import redirect
 from django.utils import timezone
+from django.http import HttpResponse
 # Create your views here.
 
 class PostsList(ListView):
@@ -40,13 +41,6 @@ class PostDetail(DetailView):
     model = Post
     template_name = 'post/post.html'
     context_object_name = 'post'
-
-    # def get_object(self, *args, **kwargs):
-    #     obj = cache.get(f'post-{self.kwargs["pk"]}', None)
-    #     if not obj:
-    #         obj = super().get_object(queryset=self.queryset)
-    #         cache.set(f'post-{self.kwargs["pk"]}', obj)
-    #     return obj
 
 
 class PostSearch(ListView):
@@ -82,4 +76,39 @@ class PostCreate(PermissionRequiredMixin, CreateView):
         post.user_id = self.request.user.id
         post.save()
         return super().form_valid(form)
-        
+
+
+class ProfileDetail(DetailView):
+    model = User
+    template_name = 'profile/profile.html'
+    context_object_name = 'profile'
+
+
+class MessageCreate(CreateView):
+    model = Message
+    template_name = 'message/message.html'
+    form_class = MessageForm
+    
+    def form_valid(self, form):
+        post = form.save(commit=False)
+        post.sender_id = self.request.user.id
+        post.to = self.kwargs['pk']
+        post.save()
+        return super().form_valid(form)
+
+
+class MessageList(ListView):
+    model = Message
+    template_name = 'message/message_list.html'
+    context_object_name = 'messages'
+
+    def get_queryset(self) -> QuerySet[Any]:
+        queryset = super().get_queryset()
+        self.filterset = MessageFilter(self.request.GET, queryset)
+        return self.model.objects.filter(to=self.request.user.id)
+
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        return context
