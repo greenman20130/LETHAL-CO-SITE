@@ -8,6 +8,7 @@ Messages
  
 
 {% block content %}
+    {{ filterset.form.as_p }}
     {% for model in models %}
     <div class="model-class">
         {{ model.name }} 

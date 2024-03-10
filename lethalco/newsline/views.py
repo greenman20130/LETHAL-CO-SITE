@@ -101,6 +101,8 @@ class MessageList(ListView):
     model = Message
     template_name = 'message/message_list.html'
     context_object_name = 'messages'
+    ordering = '-date'
+    paginate_by = 10
 
     def get_queryset(self) -> QuerySet[Any]:
         queryset = super().get_queryset()
