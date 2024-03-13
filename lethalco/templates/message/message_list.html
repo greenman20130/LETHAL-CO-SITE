@@ -23,6 +23,7 @@ Messages
                 <h1>{{ message.text }}</h1>
                 <h1>Время отправки: {{ message.date }}</h1>
                 <h1><a href="/posts/profile/{{ message.sender_id }}">{{ message.sender_id }}</h1></a>
+                <h1><a href="{% url 'message_delete' message.id%}">Удалить</a></h1>
             </div>
             </tr>
             {% endfor %}

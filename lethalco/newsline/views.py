@@ -3,13 +3,15 @@ from django.db.models.query import QuerySet
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
 import pytz
+from django.urls import reverse
 from .models import Post, User, Message
-from .forms import PostForm, MessageForm
+from .forms import PostForm, MessageForm, ProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .filters import PostFilter, MessageFilter
 from django.shortcuts import redirect
 from django.utils import timezone
 from django.http import HttpResponse
+from django.urls import reverse_lazy
 # Create your views here.
 
 class PostsList(ListView):
@@ -41,6 +43,19 @@ class PostDetail(DetailView):
     model = Post
     template_name = 'post/post.html'
     context_object_name = 'post'
+
+
+class PostDelete(DeleteView):
+    model = Post
+    template_name = 'post/post_delete.html'
+    success_url = reverse_lazy('post_list')
+
+
+class PostUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    form_class = PostForm
+    model = Post
+    template_name = 'post/post_create.html'
+    permission_required = ('post.change_post', )
 
 
 class PostSearch(ListView):
@@ -83,11 +98,21 @@ class ProfileDetail(DetailView):
     template_name = 'profile/profile.html'
     context_object_name = 'profile'
 
+    def get_absolute_url(self):
+        return reverse('profile', args=[str(self.id)])
 
-class MessageCreate(CreateView):
+class ProfileUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
+    form_class = ProfileForm
+    model = User
+    template_name = 'profile/profile_edit.html'
+    permission_required = ('profile.change_profile', )
+
+
+class MessageCreate(PermissionRequiredMixin, CreateView):
     model = Message
     template_name = 'message/message.html'
     form_class = MessageForm
+    permission_required = ('message.add_message', )
     
     def form_valid(self, form):
         post = form.save(commit=False)
@@ -114,3 +139,12 @@ class MessageList(ListView):
         context = super().get_context_data(**kwargs)
         context['filterset'] = self.filterset
         return context
+
+
+class MessageDelete(DeleteView):
+    model = Message
+    template_name = 'message/message_delete.html'
+    success_url = reverse_lazy('messages')
+
+#создай апдейт сообщения (подтверждение)
+

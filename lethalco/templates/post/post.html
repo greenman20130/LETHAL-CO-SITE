@@ -21,7 +21,11 @@ Post
         <h1>Класс: {{ post.get_pclass_display }}</h1>
         {% if post.type == 'FO' %}
         <h1><a href="{% url 'message' post.user_id%}">Откликнуться</a></h1>
-    {% endif %}
+        {% endif %}
+        {% if post.user_id == user.id%}
+        <h1><a href="{% url 'edit' post.id%}">Обновить</a></h1>
+        <h1><a href="{% url 'delete' post.id%}">Удалить</a></h1>
+        {% endif %}
     </div>
     
 

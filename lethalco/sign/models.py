@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django import forms
 from allauth.account.forms import SignupForm
 from django.contrib.auth.models import Group
-
+from django.db import models
+from django.contrib.auth.models import User
 
 class BaseRegisterForm(UserCreationForm):
     email = forms.EmailField(label = "Email")
