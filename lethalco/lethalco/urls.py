@@ -25,5 +25,4 @@ urlpatterns = [
     path('sign/', include('sign.urls')),
     path('accounts/', include('allauth.urls')),
     path('ckeditor/', include('ckeditor_uploader.urls')),
-    
 ]

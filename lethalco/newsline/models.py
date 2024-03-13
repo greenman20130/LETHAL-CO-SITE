@@ -35,3 +35,5 @@ class Message(models.Model):
     date = models.DateTimeField(auto_now_add = True)
     sender = models.ForeignKey(User, on_delete = models.CASCADE)
     to = models.IntegerField()
+    accept = models.BooleanField(null = True, default = True)
+

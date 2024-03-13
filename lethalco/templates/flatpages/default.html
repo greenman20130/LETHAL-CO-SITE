@@ -27,13 +27,30 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/posts/found/create/">Найти тиммейта </a>
-                        </li>
-                        <h1>  </h1>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/posts/memes/create/">Подкинуть мем </a>
-                        </li>
+                        {% for model in models %}
+                            <div class="model-class">
+                                {{ model.name }} 
+                            </div>
+                        {% endfor %}
+                        {% if user.username %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/posts/found/create/">Найти тиммейта </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/posts/memes/create/">Подкинуть мем </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/posts/messages/">Сообщения </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/posts/profile/{{ user.id}}">Профиль </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="/accounts/login/">Войти</a>
+                            </li>
+                        {% endif %}
+
                         {% endcache %}
                     </ul>
                 </div>
