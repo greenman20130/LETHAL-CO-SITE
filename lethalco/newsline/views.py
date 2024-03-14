@@ -98,8 +98,6 @@ class ProfileDetail(DetailView):
     template_name = 'profile/profile.html'
     context_object_name = 'profile'
 
-    def get_absolute_url(self):
-        return reverse('profile', args=[str(self.id)])
 
 class ProfileUpdate(PermissionRequiredMixin, LoginRequiredMixin, UpdateView):
     form_class = ProfileForm
@@ -141,10 +139,23 @@ class MessageList(ListView):
         return context
 
 
-class MessageDelete(DeleteView):
+class MessageDetail(DetailView):
+    model = Message
+    template_name = 'message/message_detail.html'
+    context_object_name = 'message'
+
+    
+def accept_message(request, pk):
+    message = Message.objects.get(id=pk)
+    message.accept = True
+    message.save()
+    text = 'Вы успешно подтвердили отклик'
+    return render(request, 'message/message_conf.html', {'message': text})
+
+
+
+class MessageDelete(PermissionRequiredMixin, DeleteView):
     model = Message
     template_name = 'message/message_delete.html'
     success_url = reverse_lazy('messages')
-
-#создай апдейт сообщения (подтверждение)
 
