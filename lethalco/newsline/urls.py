@@ -1,6 +1,6 @@
 from django.urls import path
 # Импортируем созданные нами представления
-from .views import PostsList, PostDetail, PostSearch, PostCreate, ProfileDetail, MessageCreate, MessageList, PostDelete, PostUpdate, ProfileUpdate, MessageDelete
+from .views import PostsList, PostDetail, PostSearch, PostCreate, ProfileDetail, MessageCreate, MessageList, PostDelete, PostUpdate, ProfileUpdate, MessageDelete, accept_message, MessageDetail
 from django.views.decorators.cache import cache_page
 from .models import Message
 
@@ -26,12 +26,8 @@ urlpatterns = [
     path('message/<int:pk>', MessageCreate.as_view(model=Message,
                                                    success_url='/posts/'), name='message'),
     path('messages/', MessageList.as_view(), name='messages'),
-    path('messages/<int:pk>', MessageDelete.as_view(), name='message_delete'),
-    #path('messages/<int:pk>/accept', .as_view(), name='message_accept'),
-
-
-    #    path('<int:pk>/edit/', PostUpdate.as_view(), name='edit'),
-    #    path('<int:pk>/delete/', PostDelete.as_view(), name='delete'),
-    #    path('categories/<int:pk>', CategoryListView.as_view(), name='category_list'),
-    #    path('categories/<int:pk>/subscribe', subscribe, name='subscribe'),
+    path('messages/<int:pk>/delete',
+         MessageDelete.as_view(), name='message_delete'),
+    path('messages/<int:pk>', MessageDetail.as_view(), name='message_detail'),
+    path('messages/<int:pk>/accept', accept_message, name='message_accept'),
 ]
